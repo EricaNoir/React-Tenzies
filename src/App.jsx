@@ -1,10 +1,28 @@
-import { useState } from "react";
+import React, { useEffect } from "react";
 import "./App.scss";
 import Die from "./components/Die";
 import { nanoid } from "nanoid";
 
 function App() {
-    const [numArr, setNumArr] = useState(allNewDice());
+    const [numArr, setNumArr] = React.useState(allNewDice());
+    const [tenzies, setTenzies] = React.useState(false);
+
+    /**
+     * Challenge: Check the dice array for these winning conditions:
+     * 1. All dice are held, and
+     * 2. all dice have the same value
+     *
+     * If both conditions are true, set `tenzies` to true and log
+     * "You won!" to the console
+     */
+
+    // Check win or not
+    React.useEffect(() => {
+        const allHeld = numArr.every((die) => die.isHeld);
+        const firstValue = numArr[0].value;
+        const allSameValue = numArr.every((die) => die.value === firstValue);
+        setTenzies(allHeld && allSameValue);
+    }, [numArr]);
 
     function generateNewDie() {
         return {
