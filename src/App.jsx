@@ -2,19 +2,11 @@ import React, { useEffect } from "react";
 import "./App.scss";
 import Die from "./components/Die";
 import { nanoid } from "nanoid";
+import Confetti from "react-confetti";
 
 function App() {
     const [numArr, setNumArr] = React.useState(allNewDice());
     const [tenzies, setTenzies] = React.useState(false);
-
-    /**
-     * Challenge: Check the dice array for these winning conditions:
-     * 1. All dice are held, and
-     * 2. all dice have the same value
-     *
-     * If both conditions are true, set `tenzies` to true and log
-     * "You won!" to the console
-     */
 
     // Check win or not
     React.useEffect(() => {
@@ -41,6 +33,11 @@ function App() {
         return arr;
     }
 
+    function resetGame() {
+        setNumArr(allNewDice());
+        setTenzies(false);
+    }
+
     // Roll all unhold dice
     function rollDice() {
         setNumArr((oldDice) =>
@@ -49,10 +46,10 @@ function App() {
     }
 
     // Make the clicked die unchangeable
-    function holdDice(id) {
+    function toggleDice(id) {
         setNumArr((oldDice) =>
             oldDice.map((die) =>
-                die.id === id ? { ...die, isHeld: true } : die
+                die.id === id ? { ...die, isHeld: !die.isHeld } : die
             )
         );
     }
@@ -63,12 +60,16 @@ function App() {
             key={num.id}
             num={num.value}
             isHeld={num.isHeld}
-            onDieClick={() => holdDice(num.id)}
+            onDieClick={() => toggleDice(num.id)}
         />
     ));
 
     // Button element
-    const rollButtonElement = (
+    const rollButtonElement = tenzies ? (
+        <button className="roll-dice" onClick={resetGame}>
+            New Game
+        </button>
+    ) : (
         <button className="roll-dice" onClick={rollDice}>
             Roll
         </button>
@@ -77,6 +78,7 @@ function App() {
     return (
         <>
             <main>
+                {tenzies && <Confetti />}
                 <h1 className="title">Tenzies</h1>
                 <p className="instructions">
                     Roll until all dice are the same. Click each die to freeze
